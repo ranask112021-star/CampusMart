@@ -1,0 +1,73 @@
+const listings = [
+  { title: "Wireless Headphones", category: "Electronics", price: 1800, image: "products/headphones-pexels.jpg" },
+  {
+    title: "Bluetooth Speaker",
+    category: "Electronics",
+    price: 1200,
+    image: "products/product-02.jpg",
+    imageCredit: "osde8info · CC BY-SA 2.0",
+    imageSource: "https://www.flickr.com/photos/8764442@N07/4526603240",
+    imageLicenseUrl: "https://creativecommons.org/licenses/by-sa/2.0/",
+  },
+  {
+    title: "Wireless Mouse",
+    category: "Electronics",
+    price: 500,
+    image: "products/product-03.jpg",
+    imageCredit: "juhansonin · CC BY-SA 2.0",
+    imageSource: "https://www.flickr.com/photos/38869431@N00/2659439401",
+    imageLicenseUrl: "https://creativecommons.org/licenses/by-sa/2.0/",
+  },
+  {
+    title: "USB Phone Charger",
+    category: "Electronics",
+    price: 700,
+    image: "products/product-05.jpg",
+    imageCredit: "phooky · CC BY-SA 2.0",
+    imageSource: "https://www.flickr.com/photos/14438191@N00/69283959",
+    imageLicenseUrl: "https://creativecommons.org/licenses/by-sa/2.0/",
+  },
+  {
+    title: "Tech Accessories Bundle",
+    category: "Electronics",
+    price: 900,
+    image: "products/product-01.jpg",
+    imageCredit: "Phil Campbell · CC BY-SA 4.0",
+    imageSource: "https://commons.wikimedia.org/wiki/File:My_Digital_Travelling_Lifestyle_Tech_Bag_(by_Phil_Campbell).jpg",
+    imageLicenseUrl: "https://creativecommons.org/licenses/by-sa/4.0/",
+  },
+  { title: "City Bicycle", category: "Cycles", price: 6500, image: "cycles.jpg" },
+  {
+    title: "Commuter Bicycle",
+    category: "Cycles",
+    price: 7200,
+    image: "products/product-06.jpg",
+    imageCredit: "Dusty J · CC BY 2.0",
+    imageSource: "https://www.flickr.com/photos/55608722@N06/12396753253",
+    imageLicenseUrl: "https://creativecommons.org/licenses/by/2.0/",
+  },
+  { title: "Study Desk", category: "Furniture", price: 2800, image: "furniture.jpg" },
+  { title: "Bedding Set", category: "Hostel items", price: 1400, image: "hostel.jpg" },
+  {
+    title: "Campus Hoodie",
+    category: "Clothing",
+    price: 900,
+    image: "products/product-18.jpg",
+    imageCredit: "FastColors · CC BY-SA 4.0",
+    imageSource: "https://commons.wikimedia.org/wiki/File:Fastcolors-men_fashion_sweatshirt-back-printed.jpg",
+    imageLicenseUrl: "https://creativecommons.org/licenses/by-sa/4.0/",
+  },
+  { title: "Campus T-Shirt", category: "Clothing", price: 650, image: "clothing.jpg" },
+  { title: "Campus Backpack", category: "Other", price: 1000, image: "other.jpg" },
+];
+
+const demoListings = listings.map((listing, index) => ({
+  ...listing,
+  _id: `demo-listing-${index + 1}`,
+  condition: "Good",
+  location: "Campus",
+  isDemo: true,
+  images: [{ url: `/demo/${listing.image}` }],
+}));
+
+export default demoListings;

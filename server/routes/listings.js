@@ -7,18 +7,18 @@ import { uploadImage, deleteImage } from "../utils/cloudinary.js";
 
 const router = express.Router();
 
-// Nayi listing banao (login + 1 se 4 photos)
+// Create a listing (login required, with 1 to 4 photos)
 router.post("/", protect, upload.array("images", 4), async (req, res) => {
   try {
     const { title, description, price, category, condition, location } = req.body;
     if (!title || price === undefined || price === "") {
-      return res.status(400).json({ message: "Title aur price zaroori hain" });
+      return res.status(400).json({ message: "Title and price are required." });
     }
     if (isNaN(Number(price)) || Number(price) < 0) {
-      return res.status(400).json({ message: "Price sahi number hona chahiye" });
+      return res.status(400).json({ message: "Price must be a valid non-negative number." });
     }
     if (!req.files || req.files.length === 0) {
-      return res.status(400).json({ message: "Kam se kam 1 photo daalo" });
+      return res.status(400).json({ message: "Please upload at least one photo." });
     }
 
     const images = [];
@@ -43,7 +43,7 @@ router.post("/", protect, upload.array("images", 4), async (req, res) => {
   }
 });
 
-// Sab listings (search, filter, pagination)
+// Get all listings (search, filter, pagination)
 router.get("/", async (req, res) => {
   try {
     const { q, category, minPrice, maxPrice, page = 1, limit = 12 } = req.query;
@@ -75,7 +75,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-// Meri apni listings
+// Get the current user's listings
 router.get("/mine", protect, async (req, res) => {
   try {
     const listings = await Listing.find({ seller: req.user._id }).sort({ createdAt: -1 });
@@ -85,32 +85,32 @@ router.get("/mine", protect, async (req, res) => {
   }
 });
 
-// Ek listing
+// Get one listing
 router.get("/:id", async (req, res) => {
   try {
     if (!mongoose.isValidObjectId(req.params.id)) {
-      return res.status(400).json({ message: "Galat listing id" });
+      return res.status(400).json({ message: "Invalid listing ID." });
     }
     const listing = await Listing.findById(req.params.id).populate("seller", "name college email");
-    if (!listing) return res.status(404).json({ message: "Listing nahi mili" });
+    if (!listing) return res.status(404).json({ message: "Listing not found." });
     res.json(listing);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 });
 
-// Listing update (sirf owner ya admin)
+// Update a listing (owner or admin only)
 router.put("/:id", protect, async (req, res) => {
   try {
     if (!mongoose.isValidObjectId(req.params.id)) {
-      return res.status(400).json({ message: "Galat listing id" });
+      return res.status(400).json({ message: "Invalid listing ID." });
     }
     const listing = await Listing.findById(req.params.id);
-    if (!listing) return res.status(404).json({ message: "Listing nahi mili" });
+    if (!listing) return res.status(404).json({ message: "Listing not found." });
 
     const isOwner = listing.seller.toString() === req.user._id.toString();
     if (!isOwner && req.user.role !== "admin") {
-      return res.status(403).json({ message: "Yeh listing aapki nahi hai" });
+      return res.status(403).json({ message: "You are not allowed to modify this listing." });
     }
 
     const fields = ["title", "description", "price", "category", "condition", "location", "status"];
@@ -124,25 +124,25 @@ router.put("/:id", protect, async (req, res) => {
   }
 });
 
-// Listing delete (sirf owner ya admin)
+// Delete a listing (owner or admin only)
 router.delete("/:id", protect, async (req, res) => {
   try {
     if (!mongoose.isValidObjectId(req.params.id)) {
-      return res.status(400).json({ message: "Galat listing id" });
+      return res.status(400).json({ message: "Invalid listing ID." });
     }
     const listing = await Listing.findById(req.params.id);
-    if (!listing) return res.status(404).json({ message: "Listing nahi mili" });
+    if (!listing) return res.status(404).json({ message: "Listing not found." });
 
     const isOwner = listing.seller.toString() === req.user._id.toString();
     if (!isOwner && req.user.role !== "admin") {
-      return res.status(403).json({ message: "Yeh listing aapki nahi hai" });
+      return res.status(403).json({ message: "You are not allowed to delete this listing." });
     }
 
     for (const img of listing.images) {
       if (img.publicId) await deleteImage(img.publicId);
     }
     await listing.deleteOne();
-    res.json({ message: "Listing delete ho gayi" });
+    res.json({ message: "Listing deleted successfully." });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
